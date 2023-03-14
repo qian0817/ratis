@@ -56,10 +56,8 @@ public class SetConfigurationRequest extends RaftClientRequest {
           .orElseGet(Collections::emptyList);
       this.mode = mode;
 
-      Preconditions.assertUnique(serversInNewConf);
-      Preconditions.assertUnique(listenersInNewConf);
-      Preconditions.assertUnique(serversInCurrentConf);
-      Preconditions.assertUnique(listenersInCurrentConf);
+      Preconditions.assertUnique(serversInNewConf, listenersInNewConf);
+      Preconditions.assertUnique(serversInCurrentConf, listenersInCurrentConf);
     }
 
     public List<RaftPeer> getPeersInNewConf(RaftProtos.RaftPeerRole role) {

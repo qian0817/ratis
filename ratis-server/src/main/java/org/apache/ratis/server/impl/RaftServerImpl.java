@@ -1246,6 +1246,23 @@ class RaftServerImpl implements RaftServer.Division,
         serversInNewConf = arguments.getPeersInNewConf(RaftPeerRole.FOLLOWER);
         listenersInNewConf = arguments.getPeersInNewConf(RaftPeerRole.LISTENER);
       }
+      // check follower and listener configuration
+      for (RaftPeer listener : listenersInNewConf) {
+        List<RaftPeer> currentFollowers = current.getAllPeers(RaftPeerRole.FOLLOWER);
+        for (RaftPeer follower : currentFollowers) {
+          if (follower.getId().equals(listener.getId())){
+            throw new SetConfigurationException("Cannot change follower to listener.");
+          }
+        }
+      }
+      for (RaftPeer server : serversInNewConf) {
+        List<RaftPeer> currentListeners = current.getAllPeers(RaftPeerRole.LISTENER);
+        for (RaftPeer listener : currentListeners) {
+          if (listener.getId().equals(server.getId())){
+            throw new SetConfigurationException("Cannot change listener to follower.");
+          }
+        }
+      }
 
       // return success with a null message if the new conf is the same as the current
       if (current.hasNoChange(serversInNewConf, listenersInNewConf)) {
